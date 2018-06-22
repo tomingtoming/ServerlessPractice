@@ -1,0 +1,35 @@
+service: serverless
+
+provider:
+  name: aws
+  region: ap-northeast-1
+  runtime: go1.x
+  stage: ${opt:stage, self:custom.defaultStage}
+
+custom:
+  defaultStage: dev
+  tryo:
+    environment:
+      dev:
+      prd:
+  mendes:
+    environment:
+
+package:
+ exclude:
+   - ./**
+ include:
+   - ./bin/**
+
+functions:
+  tryo:
+    handler: bin/tryo
+    events:
+      - http:
+          path: tryo
+          method: post
+  mendes:
+    handler: bin/mendes
+    events:
+      # 10pm JST every weekday
+      - schedule: cron(*/10 0-10 ? * MON-FRI *)
