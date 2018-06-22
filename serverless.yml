@@ -32,12 +32,14 @@ package:
 functions:
   tryo:
     handler: bin/tryo
+    environment: ${self:custom.tryo.environment.${self:provider.stage}}
     events:
       - http:
           path: tryo
           method: post
   mendes:
     handler: bin/mendes
+    environment: ${self:custom.mendes.environment.${self:provider.stage}}
     events:
       # 10pm JST every weekday
       - schedule: cron(*/10 0-10 ? * MON-FRI *)
