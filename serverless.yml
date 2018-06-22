@@ -11,9 +11,17 @@ custom:
   tryo:
     environment:
       dev:
+        SLACK_CLIENT_SECRET: ${ssm:TRYO_SLACK_CLIENT_SECRET}
+        SLACK_VERIFICATION_TOKEN: ${ssm:TRYO_SLACK_VERIFICATION_TOKEN}
       prd:
+        SLACK_CLIENT_SECRET: ${ssm:TRYO_SLACK_CLIENT_SECRET}
+        SLACK_VERIFICATION_TOKEN: ${ssm:TRYO_SLACK_VERIFICATION_TOKEN}
   mendes:
     environment:
+      dev:
+        SLACK_CLIENT_SECRET: ${ssm:MENDES_SLACK_CLIENT_SECRET}
+      prd:
+        SLACK_CLIENT_SECRET: ${ssm:MENDES_SLACK_CLIENT_SECRET}
 
 package:
  exclude:
