@@ -1,10 +1,79 @@
-resource "aws_s3_bucket" "foo" {
-  bucket = "test-bucket"
-  acl    = "private"
+variable "stage" {
+  default = "stg"
 }
 
-resource "aws_iam_role" "foo" {
-  name = "test-role"
+provider "aws" {
+  region = "ap-northeast-1"
+}
+
+terraform {
+  backend "s3" {
+    bucket = "terraform-codepipeline-backend"
+    key    = "terraform-codepipeline-backend"
+    region = "ap-northeast-1"
+  }
+}
+
+resource "aws_codepipeline" "codepipeline" {
+  name     = "${var.stage}_codepipeline"
+  role_arn = "${aws_iam_role.codepipeline.arn}"
+
+  artifact_store {
+    location = "${aws_s3_bucket.artifact_store.bucket}"
+    type     = "S3"
+
+    encryption_key {
+      id   = "${data.aws_kms_alias.encryption_key.arn}"
+      type = "KMS"
+    }
+  }
+
+  stage {
+    name = "Source"
+
+    action {
+      name     = "Source"
+      category = "Source"
+      owner    = "ThirdParty"
+      provider = "GitHub"
+      version  = "1"
+
+      configuration {
+        Owner  = "tomingtoming"
+        Repo   = "ServerlessPractice"
+        Branch = "master"
+      }
+
+      output_artifacts = [
+        "ServerlessPractice",
+      ]
+    }
+  }
+
+  stage {
+    name = "Build"
+
+    action {
+      name     = "Build"
+      category = "Build"
+      owner    = "AWS"
+      provider = "CodeBuild"
+
+      input_artifacts = [
+        "ServerlessPractice",
+      ]
+
+      version = "1"
+
+      configuration {
+        ProjectName = "test"
+      }
+    }
+  }
+}
+
+resource "aws_iam_role" "codepipeline" {
+  name = "${var.stage}_codepipeline"
 
   assume_role_policy = <<EOF
 {
@@ -22,9 +91,9 @@ resource "aws_iam_role" "foo" {
 EOF
 }
 
-resource "aws_iam_role_policy" "codepipeline_policy" {
-  name = "codepipeline_policy"
-  role = "${aws_iam_role.codepipeline_role.id}"
+resource "aws_iam_role_policy" "codepipeline" {
+  name = "${var.stage}_codepipeline"
+  role = "${aws_iam_role.codepipeline.id}"
 
   policy = <<EOF
 {
@@ -33,86 +102,22 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
     {
       "Effect":"Allow",
       "Action": [
-        "s3:GetObject",
-        "s3:GetObjectVersion",
-        "s3:GetBucketVersioning"
+        "*"
       ],
       "Resource": [
-        "${aws_s3_bucket.foo.arn}",
-        "${aws_s3_bucket.foo.arn}/*"
+        "*"
       ]
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-        "codebuild:BatchGetBuilds",
-        "codebuild:StartBuild"
-      ],
-      "Resource": "*"
     }
   ]
 }
 EOF
 }
 
-data "aws_kms_alias" "s3kmskey" {
-  name = "alias/myKmsKey"
+resource "aws_s3_bucket" "artifact_store" {
+  bucket = "${var.stage}-artifact-store"
+  acl    = "private"
 }
 
-resource "aws_codepipeline" "foo" {
-  name     = "tf-test-pipeline"
-  role_arn = "${aws_iam_role.foo.arn}"
-
-  artifact_store {
-    location = "${aws_s3_bucket.foo.bucket}"
-    type     = "S3"
-
-    encryption_key {
-      id   = "${data.aws_kms_alias.s3kmskey.arn}"
-      type = "KMS"
-    }
-  }
-
-  stage {
-    name = "Source"
-
-    action {
-      name     = "Source"
-      category = "Source"
-      owner    = "ThirdParty"
-      provider = "GitHub"
-      version  = "1"
-
-      output_artifacts = [
-        "test",
-      ]
-
-      configuration {
-        Owner  = "my-organization"
-        Repo   = "test"
-        Branch = "master"
-      }
-    }
-  }
-
-  stage {
-    name = "Build"
-
-    action {
-      name     = "Build"
-      category = "Build"
-      owner    = "AWS"
-      provider = "CodeBuild"
-
-      input_artifacts = [
-        "test",
-      ]
-
-      version = "1"
-
-      configuration {
-        ProjectName = "test"
-      }
-    }
-  }
+data "aws_kms_alias" "encryption_key" {
+  name = "alias/${var.stage}_encryption_key"
 }
