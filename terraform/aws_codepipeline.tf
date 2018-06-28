@@ -148,6 +148,11 @@ resource "aws_codebuild_project" "codebuild" {
     compute_type = "BUILD_GENERAL1_SMALL"
     image        = "aws/codebuild/golang:1.10"
     type         = "LINUX_CONTAINER"
+
+    environment_variable {
+      "name"  = "stage"
+      "value" = "${var.stage}"
+    }
   }
 
   source {

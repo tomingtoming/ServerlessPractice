@@ -24,7 +24,7 @@ phases:
       - make
   build:
     commands:
-      - serverless deploy --stage dev
+      - serverless deploy --stage $stage
   post_build:
     commands:
       - touch success
