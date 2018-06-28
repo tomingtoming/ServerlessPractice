@@ -85,6 +85,13 @@ resource "aws_iam_role" "codepipeline" {
         "Service": "codepipeline.amazonaws.com"
       },
       "Action": "sts:AssumeRole"
+    },
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "codebuild.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
     }
   ]
 }
@@ -123,7 +130,7 @@ data "aws_kms_alias" "encryption_key" {
 }
 
 resource "aws_codebuild_project" "codebuild" {
-  name          = "${var.stage}_codebuild"
+  name          = "${var.stage}-serverless-build-deploy"
   description   = "Serverless deploy (stage: ${var.stage})"
   build_timeout = "5"
   service_role  = "${aws_iam_role.codepipeline.arn}"
