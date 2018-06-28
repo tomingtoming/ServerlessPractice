@@ -1,0 +1,19 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - npm install -g serverless
+  pre_build:
+    commands:
+      - pwd
+      - ls -l
+  build:
+    commands:
+      - serverless deploy --stage $stage
+  post_build:
+    commands:
+      - touch success
+artifacts:
+  files:
+    - success

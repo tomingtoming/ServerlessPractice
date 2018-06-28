@@ -39,13 +39,14 @@ resource "aws_codepipeline" "codepipeline" {
       version  = "1"
 
       configuration {
-        Owner  = "tomingtoming"
-        Repo   = "ServerlessPractice"
-        Branch = "master"
+        Owner                = "tomingtoming"
+        Repo                 = "ServerlessPractice"
+        Branch               = "master"
+        PollForSourceChanges = "false"
       }
 
       output_artifacts = [
-        "ServerlessPractice",
+        "ServerlessPracticeSource",
       ]
     }
   }
@@ -60,13 +61,38 @@ resource "aws_codepipeline" "codepipeline" {
       provider = "CodeBuild"
 
       input_artifacts = [
-        "ServerlessPractice",
+        "ServerlessPracticeSource",
+      ]
+
+      output_artifacts = [
+        "ServerlessPracticeBuild",
       ]
 
       version = "1"
 
       configuration {
-        ProjectName = "${var.stage}-serverless-build-deploy"
+        ProjectName = "${var.stage}-serverless-build"
+      }
+    }
+  }
+
+  stage {
+    name = "Deploy"
+
+    action {
+      name     = "Build"
+      category = "Build"
+      owner    = "AWS"
+      provider = "CodeBuild"
+
+      input_artifacts = [
+        "ServerlessPracticeBuild",
+      ]
+
+      version = "1"
+
+      configuration {
+        ProjectName = "${var.stage}-serverless-deploy"
       }
     }
   }
@@ -129,9 +155,9 @@ data "aws_kms_alias" "encryption_key" {
   name = "alias/${var.stage}_encryption_key"
 }
 
-resource "aws_codebuild_project" "codebuild" {
-  name          = "${var.stage}-serverless-build-deploy"
-  description   = "Serverless deploy (stage: ${var.stage})"
+resource "aws_codebuild_project" "serverless-build" {
+  name          = "${var.stage}-serverless-build"
+  description   = "Serverless build (stage: ${var.stage})"
   build_timeout = "5"
   service_role  = "${aws_iam_role.codepipeline.arn}"
 
@@ -157,6 +183,38 @@ resource "aws_codebuild_project" "codebuild" {
 
   source {
     type      = "CODEPIPELINE"
-    buildspec = "buildspec.yml"
+    buildspec = "buildspec-build.yml"
+  }
+}
+
+resource "aws_codebuild_project" "serverless-deploy" {
+  name          = "${var.stage}-serverless-deploy"
+  description   = "Serverless deploy (stage: ${var.stage})"
+  build_timeout = "5"
+  service_role  = "${aws_iam_role.codepipeline.arn}"
+
+  artifacts {
+    type = "CODEPIPELINE"
+  }
+
+  cache {
+    type     = "S3"
+    location = "${aws_s3_bucket.artifact_store.bucket}"
+  }
+
+  environment {
+    compute_type = "BUILD_GENERAL1_SMALL"
+    image        = "aws/codebuild/nodejs:8.11.0"
+    type         = "LINUX_CONTAINER"
+
+    environment_variable {
+      "name"  = "stage"
+      "value" = "${var.stage}"
+    }
+  }
+
+  source {
+    type      = "CODEPIPELINE"
+    buildspec = "buildspec-deploy.yml"
   }
 }
