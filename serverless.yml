@@ -7,10 +7,10 @@ provider:
   stage: ${opt:stage, self:custom.defaultStage}
 
 custom:
-  defaultStage: dev
+  defaultStage: stg
   tryo:
     environment:
-      dev:
+      stg:
         SLACK_CLIENT_SECRET: ${ssm:TRYO_SLACK_CLIENT_SECRET}
         SLACK_VERIFICATION_TOKEN: ${ssm:TRYO_SLACK_VERIFICATION_TOKEN}
       prd:
@@ -18,7 +18,7 @@ custom:
         SLACK_VERIFICATION_TOKEN: ${ssm:TRYO_SLACK_VERIFICATION_TOKEN}
   mendes:
     environment:
-      dev:
+      stg:
         SLACK_CLIENT_SECRET: ${ssm:MENDES_SLACK_CLIENT_SECRET}
       prd:
         SLACK_CLIENT_SECRET: ${ssm:MENDES_SLACK_CLIENT_SECRET}
