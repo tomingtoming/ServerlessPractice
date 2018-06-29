@@ -113,7 +113,19 @@ resource "aws_iam_role" "codepipeline" {
         "Service": "codepipeline.amazonaws.com"
       },
       "Action": "sts:AssumeRole"
-    },
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role" "codebuild" {
+  name = "${var.stage}_codebuild"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
     {
       "Effect": "Allow",
       "Principal": {
@@ -161,7 +173,7 @@ resource "aws_codebuild_project" "serverless-build" {
   name          = "${var.stage}-serverless-build"
   description   = "Serverless build (stage: ${var.stage})"
   build_timeout = "5"
-  service_role  = "${aws_iam_role.codepipeline.arn}"
+  service_role  = "${aws_iam_role.codebuild.arn}"
 
   artifacts {
     type = "CODEPIPELINE"
@@ -193,7 +205,7 @@ resource "aws_codebuild_project" "serverless-deploy" {
   name          = "${var.stage}-serverless-deploy"
   description   = "Serverless deploy (stage: ${var.stage})"
   build_timeout = "5"
-  service_role  = "${aws_iam_role.codepipeline.arn}"
+  service_role  = "${aws_iam_role.codebuild.arn}"
 
   artifacts {
     type = "CODEPIPELINE"
