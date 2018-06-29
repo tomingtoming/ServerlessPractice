@@ -6,10 +6,12 @@ provider "aws" {
   region = "ap-northeast-1"
 }
 
+data "aws_caller_identity" "self" { }
+
 terraform {
   backend "s3" {
-    bucket = "terraform-codepipeline-backend"
-    key    = "terraform-codepipeline-backend"
+    bucket = "serverless-practice-backend"
+    key    = "serverless-practice-backend"
     region = "ap-northeast-1"
   }
 }
@@ -147,7 +149,7 @@ EOF
 }
 
 resource "aws_s3_bucket" "artifact_store" {
-  bucket = "${var.stage}-artifact-store"
+  bucket = "${var.stage}-artifact-store-${data.aws_caller_identity.self.account_id}"
   acl    = "private"
 }
 
