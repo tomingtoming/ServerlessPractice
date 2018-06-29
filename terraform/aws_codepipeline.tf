@@ -160,6 +160,28 @@ resource "aws_iam_role_policy" "codepipeline" {
 EOF
 }
 
+resource "aws_iam_role_policy" "codebuild" {
+  name = "${var.stage}_codebuild"
+  role = "${aws_iam_role.codebuild.id}"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect":"Allow",
+      "Action": [
+        "*"
+      ],
+      "Resource": [
+        "*"
+      ]
+    }
+  ]
+}
+EOF
+}
+
 resource "aws_s3_bucket" "artifact_store" {
   bucket = "${var.stage}-artifact-store-${data.aws_caller_identity.self.account_id}"
   acl    = "private"
