@@ -21,3 +21,4 @@ artifacts:
   files:
     - bin/*
     - buildspec-deploy.yml
+    - serverless.yml

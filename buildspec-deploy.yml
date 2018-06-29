@@ -7,7 +7,7 @@ phases:
   pre_build:
     commands:
       - pwd
-      - ls -l
+      - find . -ls
   build:
     commands:
       - serverless deploy --stage $stage
