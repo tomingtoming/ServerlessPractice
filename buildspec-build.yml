@@ -15,5 +15,5 @@ phases:
       - make
 artifacts:
   files:
-    - /go/src/github.com/tomingtoming/ServerlessPractice/bin/
+    - /go/src/github.com/tomingtoming/ServerlessPractice/bin/*
     - /go/src/github.com/tomingtoming/ServerlessPractice/buildspec-deploy.yml
