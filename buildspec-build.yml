@@ -13,7 +13,11 @@ phases:
   build:
     commands:
       - make
+  post_build:
+    commands:
+      - mv /go/src/github.com/tomingtoming/ServerlessPractice/* $CODEBUILD_SRC_DIR
+      - cd $CODEBUILD_SRC_DIR
 artifacts:
   files:
-    - /go/src/github.com/tomingtoming/ServerlessPractice/bin/*
-    - /go/src/github.com/tomingtoming/ServerlessPractice/buildspec-deploy.yml
+    - bin/*
+    - buildspec-deploy.yml
