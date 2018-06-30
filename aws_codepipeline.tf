@@ -6,7 +6,7 @@ provider "aws" {
   region = "ap-northeast-1"
 }
 
-data "aws_caller_identity" "self" { }
+data "aws_caller_identity" "self" {}
 
 terraform {
   backend "s3" {
@@ -23,11 +23,6 @@ resource "aws_codepipeline" "codepipeline" {
   artifact_store {
     location = "${aws_s3_bucket.artifact_store.bucket}"
     type     = "S3"
-
-    encryption_key {
-      id   = "${data.aws_kms_alias.encryption_key.arn}"
-      type = "KMS"
-    }
   }
 
   stage {
@@ -185,10 +180,6 @@ EOF
 resource "aws_s3_bucket" "artifact_store" {
   bucket = "${var.stage}-artifact-store-${data.aws_caller_identity.self.account_id}"
   acl    = "private"
-}
-
-data "aws_kms_alias" "encryption_key" {
-  name = "alias/${var.stage}_encryption_key"
 }
 
 resource "aws_codebuild_project" "serverless-build" {
