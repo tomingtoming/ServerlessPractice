@@ -9,7 +9,7 @@ import (
 func main() {
 	lambda.Start(func() error {
 		api := slack.New(os.Getenv("SLACK_CLIENT_SECRET"))
-		if _, _, err := api.PostMessage("#zzz_botops_hashigo", "はしご", slack.PostMessageParameters{}); err != nil {
+		if _, _, err := api.PostMessage("#random", "mendes", slack.PostMessageParameters{}); err != nil {
 			return err
 		} else {
 			return nil
