@@ -42,13 +42,13 @@ resource "aws_codepipeline" "codepipeline" {
 
       configuration {
         Owner                = "tomingtoming"
-        Repo                 = "ServerlessPractice"
+        Repo                 = "serverless-practice"
         Branch               = "master"
         PollForSourceChanges = "false"
       }
 
       output_artifacts = [
-        "ServerlessPracticeSource",
+        "serverless-practice-source",
       ]
     }
   }
@@ -63,11 +63,11 @@ resource "aws_codepipeline" "codepipeline" {
       provider = "CodeBuild"
 
       input_artifacts = [
-        "ServerlessPracticeSource",
+        "serverless-practice-source",
       ]
 
       output_artifacts = [
-        "ServerlessPracticeBuild",
+        "serverless-practice-build",
       ]
 
       version = "1"
@@ -88,7 +88,7 @@ resource "aws_codepipeline" "codepipeline" {
       provider = "CodeBuild"
 
       input_artifacts = [
-        "ServerlessPracticeBuild",
+        "serverless-practice-build",
       ]
 
       version = "1"
