@@ -39,7 +39,7 @@ resource "aws_codepipeline" "codepipeline" {
         Owner                = "tomingtoming"
         Repo                 = "serverless-practice"
         Branch               = "master"
-        PollForSourceChanges = "false"
+        PollForSourceChanges = false
       }
 
       output_artifacts = [
