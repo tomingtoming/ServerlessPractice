@@ -8,6 +8,7 @@ phases:
     commands:
       - pwd
       - find . -ls
+      - cd serverless
   build:
     commands:
       - serverless deploy --stage $stage

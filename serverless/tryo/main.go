@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"github.com/nlopes/slack"
 	"os"
-	"github.com/tomingtoming/ServerlessPractice/common/slackbot"
+	"github.com/tomingtoming/serverless-practice/serverless/common/slackbot"
 )
 
 func main() {

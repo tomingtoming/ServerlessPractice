@@ -1,11 +1,5 @@
-# Serverless directories
-.serverless
-
-# golang output binary directory
-bin
-
-# golang vendor (dependencies) directory
-vendor
-
-/.idea/
-/.terraform/
+.serverless/
+.terraform/
+.idea/
+bin/
+vendor/

@@ -1,0 +1,28 @@
+version: 0.2
+
+env:
+  variables:
+    GO_BUILD_DIR: "/go/src/github.com/tomingtoming/serverless-practice/serverless"
+
+phases:
+  install:
+    commands:
+      - go get -u github.com/golang/dep/cmd/dep
+  pre_build:
+    commands:
+      - pwd
+      - mkdir -pv $GO_BUILD_DIR/
+      - mv * $GO_BUILD_DIR/
+      - cd $GO_BUILD_DIR/
+  build:
+    commands:
+      - make
+  post_build:
+    commands:
+      - mv $GO_BUILD_DIR/* $CODEBUILD_SRC_DIR
+      - cd $CODEBUILD_SRC_DIR
+artifacts:
+  files:
+    - serverless/bin/*
+    - serverless/buildspec-deploy.yml
+    - serverless/serverless.yml
