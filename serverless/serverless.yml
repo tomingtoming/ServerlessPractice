@@ -7,21 +7,21 @@ provider:
   stage: ${opt:stage, self:custom.defaultStage}
 
 custom:
-  defaultStage: stg
+  defaultStage: staging
   tryo:
     environment:
-      stg:
-        SLACK_CLIENT_SECRET: ${ssm:TRYO_SLACK_CLIENT_SECRET}
-        SLACK_VERIFICATION_TOKEN: ${ssm:TRYO_SLACK_VERIFICATION_TOKEN}
-      prd:
-        SLACK_CLIENT_SECRET: ${ssm:TRYO_SLACK_CLIENT_SECRET}
-        SLACK_VERIFICATION_TOKEN: ${ssm:TRYO_SLACK_VERIFICATION_TOKEN}
+      staging:
+        SLACK_CLIENT_SECRET: ${ssm:/serverless-practice/staging/tryo/slack-client-secret}
+        SLACK_VERIFICATION_TOKEN: ${ssm:/serverless-practice/staging/slack-verification-token}
+      production:
+        SLACK_CLIENT_SECRET: ${ssm:/serverless-practice/production/slack-client-secret}
+        SLACK_VERIFICATION_TOKEN: ${ssm:/serverless-practice/production/slack-verification-token}
   mendes:
     environment:
-      stg:
-        SLACK_CLIENT_SECRET: ${ssm:MENDES_SLACK_CLIENT_SECRET}
-      prd:
-        SLACK_CLIENT_SECRET: ${ssm:MENDES_SLACK_CLIENT_SECRET}
+      staging:
+        SLACK_CLIENT_SECRET: ${ssm:/serverless-practice/staging/mendes/slack-client-secret}
+      production:
+        SLACK_CLIENT_SECRET: ${ssm:/serverless-practice/production/mendes/slack-client-secret}
 
 package:
  exclude:

@@ -1,14 +1,9 @@
-resource "aws_s3_bucket" "artifact_store" {
-  bucket = "${var.stage}-artifact-store-${data.aws_caller_identity.self.account_id}"
-  acl    = "private"
-}
-
 resource "aws_codepipeline" "codepipeline" {
   name     = "${var.stage}_codepipeline"
   role_arn = "${aws_iam_role.codepipeline.arn}"
 
   artifact_store {
-    location = "${aws_s3_bucket.artifact_store.bucket}"
+    location = "${var.artifact_store_bucket}"
     type     = "S3"
   }
 
@@ -25,7 +20,7 @@ resource "aws_codepipeline" "codepipeline" {
       configuration {
         Owner                = "tomingtoming"
         Repo                 = "serverless-practice"
-        Branch               = "${var.stage == "prd" ? "master" : "develop"}"
+        Branch               = "${var.source_branch}"
         PollForSourceChanges = false
       }
 

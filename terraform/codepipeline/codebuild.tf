@@ -10,7 +10,7 @@ resource "aws_codebuild_project" "serverless-build" {
 
   cache {
     type     = "S3"
-    location = "${aws_s3_bucket.artifact_store.bucket}"
+    location = "${var.artifact_store_bucket}"
   }
 
   environment {
@@ -42,7 +42,7 @@ resource "aws_codebuild_project" "serverless-deploy" {
 
   cache {
     type     = "S3"
-    location = "${aws_s3_bucket.artifact_store.bucket}"
+    location = "${var.artifact_store_bucket}"
   }
 
   environment {

@@ -1,9 +1,9 @@
 variable "region" {
-  default     = "ap-northeast-1"
+  default = "ap-northeast-1"
 }
 
 variable "stage" {
-  default = "stg"
+  default = "staging"
 }
 
 data "aws_caller_identity" "self" {}
