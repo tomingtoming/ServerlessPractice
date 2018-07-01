@@ -12,17 +12,17 @@ phases:
     commands:
       - pwd
       - mkdir -pv $GO_BUILD_DIR/
-      - mv * $GO_BUILD_DIR/
+      - mv -v serverless/* $GO_BUILD_DIR/
       - cd $GO_BUILD_DIR/
   build:
     commands:
       - make
   post_build:
     commands:
-      - mv $GO_BUILD_DIR/* $CODEBUILD_SRC_DIR
+      - mv -v * $CODEBUILD_SRC_DIR
       - cd $CODEBUILD_SRC_DIR
 artifacts:
   files:
-    - serverless/bin/*
-    - serverless/buildspec-deploy.yml
-    - serverless/serverless.yml
+    - bin/*
+    - buildspec-deploy.yml
+    - serverless.yml
