@@ -1,0 +1,45 @@
+service: serverless
+
+provider:
+  name: aws
+  region: ap-northeast-1
+  runtime: go1.x
+  stage: ${opt:stage, self:custom.defaultStage}
+
+custom:
+  defaultStage: staging
+  tryo:
+    environment:
+      staging:
+        SLACK_CLIENT_SECRET: ${ssm:/serverless-practice/staging/tryo/slack-client-secret}
+        SLACK_VERIFICATION_TOKEN: ${ssm:/serverless-practice/staging/slack-verification-token}
+      production:
+        SLACK_CLIENT_SECRET: ${ssm:/serverless-practice/production/slack-client-secret}
+        SLACK_VERIFICATION_TOKEN: ${ssm:/serverless-practice/production/slack-verification-token}
+  mendes:
+    environment:
+      staging:
+        SLACK_CLIENT_SECRET: ${ssm:/serverless-practice/staging/mendes/slack-client-secret}
+      production:
+        SLACK_CLIENT_SECRET: ${ssm:/serverless-practice/production/mendes/slack-client-secret}
+
+package:
+ exclude:
+   - ./**
+ include:
+   - ./bin/**
+
+functions:
+  tryo:
+    handler: bin/tryo
+    environment: ${self:custom.tryo.environment.${self:provider.stage}}
+    events:
+      - http:
+          path: tryo
+          method: post
+  mendes:
+    handler: bin/mendes
+    environment: ${self:custom.mendes.environment.${self:provider.stage}}
+    events:
+      # 10pm JST every weekday
+      - schedule: cron(*/10 0-10 ? * MON-FRI *)
